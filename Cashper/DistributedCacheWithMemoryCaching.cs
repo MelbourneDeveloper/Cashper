@@ -61,10 +61,17 @@ public class DistributedCacheWithMemoryCaching : IDistributedCache
     public Task RefreshAsync(string key, CancellationToken token = default) =>
         _distributedCache.RefreshAsync(key, token);
 
-    public void Remove(string key) => _distributedCache.Remove(key);
+    public void Remove(string key)
+    {
+        _memoryCache.Remove(key);
+        _distributedCache.Remove(key);
+    }
 
-    public Task RemoveAsync(string key, CancellationToken token = default) =>
-        _distributedCache.RemoveAsync(key, token);
+    public Task RemoveAsync(string key, CancellationToken token = default)
+    {
+        _memoryCache.Remove(key);
+        return _distributedCache.RemoveAsync(key, token);
+    }
 
     public void Set(string key, byte[] value, DistributedCacheEntryOptions options) =>
         _distributedCache.Set(key, value, options);
